@@ -1,0 +1,6 @@
+<button
+  class="w-[100%] flex justify-start items-center p-3"
+  (click)="type === 'delete' ? deleteUser() : editUser()"
+>
+  <ng-content></ng-content>
+</button>

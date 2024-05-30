@@ -1,0 +1,97 @@
+<h1 class="!text-3xl flex justify-between" mat-dialog-title>
+  {{ edit ? "Edit user" : user.name }}
+</h1>
+<div mat-dialog-content>
+  <form *ngIf="edit" [formGroup]="form" (ngSubmit)="saveUser()">
+    <div *ngFor="let input of inputProps" class="w-[100%] flex flex-col">
+      <mat-form-field appearance="fill">
+        <mat-label>{{ input.label }}</mat-label>
+        <input
+          matInput
+          [formControlName]="input.name"
+          name="{{ input.name }}"
+          [type]="input.hide ? 'password' : 'text'"
+          [autocomplete]="input.hide !== undefined && 'off'"
+        />
+        <button
+          *ngIf="input.hide !== undefined"
+          mat-icon-button
+          matSuffix
+          type="button"
+          (click)="hideButton(input)"
+          [attr.aria-pressed]="input.hide"
+        >
+          <mat-icon color="primary">{{
+            input.hide ? "visibility_off" : "visibility"
+          }}</mat-icon>
+        </button>
+      </mat-form-field>
+      <small
+        class="text-red-400"
+        *ngIf="form.get(input.name)?.invalid && form.get(input.name)?.touched"
+        >{{ validationService.getErrorMessage(input.name, form) }}</small
+      >
+    </div>
+    <button class="hidden" type="submit"></button>
+  </form>
+  <div *ngIf="!edit">
+    <p class="flex items-center gap-2">
+      <b class="!text-color">ID:</b> {{ user.id }}
+    </p>
+    <p class="flex items-center gap-2">
+      <b class="!text-color">Email:</b>{{ user.email }}
+    </p>
+    <p class="flex items-center gap-2">
+      <b class="!text-color">Role:</b
+      >{{ user.role.charAt(0).toUpperCase() + user.role.slice(1) }}
+    </p>
+    <p class="flex items-center gap-2">
+      <b class="!text-color">Verified:</b>
+      <mat-icon class="flex justify-center items-center">{{
+        user.isEmailVerified ? "check" : "close"
+      }}</mat-icon>
+    </p>
+  </div>
+</div>
+<div
+  class="!justify-end !px-3"
+  *ngIf="role === 'admin' && !edit"
+  mat-dialog-actions
+>
+  <button
+    class="!bg-gray-100 !text-black hover:!bg-gray-200 transition-all duration-75 !min-w-[6rem]"
+    mat-button
+    (click)="closeModal()"
+  >
+    Close
+  </button>
+  <button
+    *ngIf="checkRole()"
+    class="!bg-gray-900 !text-white hover:!bg-gray-700 transition-all duration-75 !min-w-[6rem]"
+    mat-button
+    (click)="editUser()"
+  >
+    Edit {{ authService.currentUser?.id === user.id ? "profile" : "user" }}
+  </button>
+</div>
+<div
+  class="!justify-end !px-3"
+  *ngIf="role === 'admin' && edit"
+  mat-dialog-actions
+>
+  <button
+    class="!bg-gray-100 !text-black hover:!bg-gray-200 transition-all duration-75 !min-w-[6rem]"
+    mat-button
+    (click)="editUser()"
+  >
+    Cancel
+  </button>
+  <button
+    class="!bg-green-300 !text-black hover:!bg-green-400 transition-all duration-75 !min-w-[6rem]"
+    mat-button
+    type="submit"
+    (click)="saveUser()"
+  >
+    Save
+  </button>
+</div>

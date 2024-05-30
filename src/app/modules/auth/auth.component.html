@@ -1,0 +1,47 @@
+<div class="flex justify-center items-center h-screen">
+  <form
+    [formGroup]="form"
+    (ngSubmit)="onSubmit()"
+    class="flex flex-col w-[20%] bg-gray-50 h-auto rounded-xl shadow-md justify-center gap-6 items-center p-6 px-8"
+  >
+    <header class="text-black text-5xl">{{ title }}</header>
+    <div *ngFor="let input of inputProps" class="w-[100%] flex flex-col">
+      <mat-form-field appearance="fill">
+        <mat-label>{{ input.label }}</mat-label>
+        <input
+          matInput
+          [formControlName]="input.name"
+          name="{{ input.name }}"
+          [type]="input.hide ? 'password' : 'text'"
+          [autocomplete]="input.hide !== undefined && 'off'"
+        />
+        <button
+          *ngIf="input.hide !== undefined"
+          mat-icon-button
+          matSuffix
+          type="button"
+          (click)="hideButton(input)"
+          [attr.aria-pressed]="input.hide"
+        >
+          <mat-icon color="primary">{{
+            input.hide ? "visibility_off" : "visibility"
+          }}</mat-icon>
+        </button>
+      </mat-form-field>
+      <small
+        class="text-red-400"
+        *ngIf="form.get(input.name)?.invalid && form.get(input.name)?.touched"
+        >{{ validationService.getErrorMessage(input.name, form) }}</small
+      >
+    </div>
+    <button mat-raised-button color="primary" type="submit">
+      {{ mainAction }}
+    </button>
+    <a
+      (click)="navigate(altPath)"
+      type="button"
+      class="text-black cursor-pointer hover:text-indigo-300 underline"
+      >{{ altAction }}</a
+    >
+  </form>
+</div>

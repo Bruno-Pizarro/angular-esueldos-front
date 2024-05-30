@@ -1,0 +1,15 @@
+<mat-toolbar class="flex justify-between items-center bg-purple-900 text-white">
+  <div class="justify-between items-center gap-5 flex">
+    <span>e-Sueldos: User management</span>
+  </div>
+  <span class="example-spacer"></span>
+  <div class="flex gap-10">
+    <button
+      mat-icon-button
+      class="example-icon favorite-icon flex items-center justify-center"
+      (click)="authService.logOut()"
+    >
+      <mat-icon>logout</mat-icon>
+    </button>
+  </div>
+</mat-toolbar>

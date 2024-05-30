@@ -1,0 +1,22 @@
+<h1 mat-dialog-title>
+  Delete user <b>{{ user.name }}?</b>
+</h1>
+<div mat-dialog-content>
+  <p>Are you sure you want to delete the user {{ user.name }}?</p>
+</div>
+<div mat-dialog-actions class="!justify-end !px-3">
+  <button
+    mat-button
+    class="!bg-gray-100 !text-black hover:!bg-gray-200 transition-all duration-75 !w-[6rem]"
+    (click)="editUser()"
+  >
+    Cancel
+  </button>
+  <button
+    mat-button
+    class="!bg-red-300 !text-black hover:!bg-red-400 transition-all duration-75 !w-[6rem]"
+    (click)="deleteUser()"
+  >
+    Delete
+  </button>
+</div>

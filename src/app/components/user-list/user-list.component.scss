@@ -1,0 +1,32 @@
+table {
+    width: 100%;
+}
+
+th.mat-sort-header-sorted {
+    color: black;
+}
+
+tr[mat-row] {
+    &:hover {
+        background-color: #d7d7d7;
+    }
+}
+
+.mdc-list-item__primary-text {
+    background-color: red !important;
+}
+
+.role {
+    background-color: #1a1a1a;
+    border-radius: 0.5rem;
+    color: white;
+    margin: auto;
+    padding: 0.3rem;
+    &__admin {
+        @extend .role;
+        background-color: #ac4e4e;
+    }
+    &__user {
+        @extend .role;
+    }
+}
