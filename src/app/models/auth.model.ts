@@ -1,3 +1,5 @@
+import { UserRoles } from 'src/app/models/user.model';
+
 export interface IRegisterState {
   name: string;
   email: string;
@@ -11,6 +13,7 @@ export interface IInputProps<T> {
   label: string;
   name: keyof T;
   hide?: boolean;
+  type?: string;
 }
 
 export interface ILoginState {
@@ -29,4 +32,14 @@ export interface IEditUser {
 
 export type IEditHideState = {
   [key in keyof IEditUser]?: boolean;
+};
+export interface ICreateUser {
+  email: string;
+  password: string;
+  name: string;
+  role: `${UserRoles}`;
+}
+
+export type ICreateHideState = {
+  [key in keyof ICreateUser]?: boolean;
 };

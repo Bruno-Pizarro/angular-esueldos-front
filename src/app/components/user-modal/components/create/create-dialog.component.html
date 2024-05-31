@@ -1,15 +1,12 @@
-<div class="flex justify-center items-center h-screen">
-  <form
-    [formGroup]="form"
-    (ngSubmit)="onSubmit()"
-    class="flex flex-col w-[20%] bg-gray-50 h-auto rounded-xl shadow-md justify-center gap-6 items-center p-6 px-8"
-  >
-    <header class="text-black text-5xl">{{ title }}</header>
+<h1 class="!text-3xl flex justify-between" mat-dialog-title>Create user</h1>
+<div mat-dialog-content>
+  <form [formGroup]="form" (ngSubmit)="saveUser()">
     <div *ngFor="let input of inputProps" class="w-[100%] flex flex-col">
       <mat-form-field appearance="fill">
         <mat-label>{{ input.label }}</mat-label>
         <input
           matInput
+          *ngIf="input.type === undefined"
           [formControlName]="input.name"
           name="{{ input.name }}"
           [type]="input.hide ? 'password' : 'text'"
@@ -27,6 +24,15 @@
             input.hide ? "visibility_off" : "visibility"
           }}</mat-icon>
         </button>
+        <mat-select
+          *ngIf="input.type === 'select'"
+          matInput
+          [formControlName]="input.name"
+        >
+          <mat-option *ngFor="let role of roles" [value]="role.value">
+            {{ role.label }}
+          </mat-option>
+        </mat-select>
       </mat-form-field>
       <small
         class="text-red-400"
@@ -34,14 +40,23 @@
         >{{ validationService.getErrorMessage(input.name, form) }}</small
       >
     </div>
-    <button mat-raised-button color="primary" type="submit">
-      {{ mainAction }}
-    </button>
-    <a
-      (click)="navigate(altPath)"
-      type="button"
-      class="text-black cursor-pointer hover:text-indigo-300 underline"
-      >{{ altAction }}</a
-    >
+    <button class="hidden" type="submit"></button>
   </form>
+</div>
+<div class="!justify-end !px-3" mat-dialog-actions>
+  <button
+    class="!bg-gray-100 !text-black hover:!bg-gray-200 transition-all duration-75 !min-w-[6rem]"
+    mat-button
+    (click)="closeModal()"
+  >
+    Cancel
+  </button>
+  <button
+    class="!bg-green-300 !text-black hover:!bg-green-400 transition-all duration-75 !min-w-[6rem]"
+    mat-button
+    type="submit"
+    (click)="saveUser()"
+  >
+    Save
+  </button>
 </div>

@@ -2,7 +2,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
-import { IEditUser, IUser, IUsersResponse } from 'src/app/models';
+import { ICreateUser, IEditUser, IUser, IUsersResponse } from 'src/app/models';
 
 @Injectable({
   providedIn: 'root',
@@ -26,6 +26,17 @@ export class UsersService {
       .then(() => {
         this.usersUpdatedSubject.next();
         this.toastr.success('User updated');
+      })
+      .catch(({ error, message }: HttpErrorResponse) => {
+        this.toastr.error(error.message ?? message);
+      });
+  }
+
+  async createUser(user: ICreateUser) {
+    return await firstValueFrom(this.http.post(`users`, user))
+      .then(() => {
+        this.usersUpdatedSubject.next();
+        this.toastr.success('User created');
       })
       .catch(({ error, message }: HttpErrorResponse) => {
         this.toastr.error(error.message ?? message);

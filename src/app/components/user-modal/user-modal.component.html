@@ -1,6 +1,10 @@
 <button
-  class="w-[100%] flex justify-start items-center p-3"
-  (click)="type === 'delete' ? deleteUser() : editUser()"
+  [class]="
+    type === 'create'
+      ? 'bg-emerald-600 p-2 rounded-md transition-all duration-100 hover:bg-emerald-500'
+      : 'w-[100%] flex justify-start items-center p-3'
+  "
+  (click)="onClick()"
 >
   <ng-content></ng-content>
 </button>

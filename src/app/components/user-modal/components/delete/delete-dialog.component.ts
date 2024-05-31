@@ -33,8 +33,8 @@ export class DeleteUserDialog {
     this.user = await this.userService.getUserByID(this.id);
   }
 
-  editUser(): void {
-    this.edit = !this.edit;
+  closeModal(): void {
+    this.dialogRef.close();
   }
 
   async deleteUser() {

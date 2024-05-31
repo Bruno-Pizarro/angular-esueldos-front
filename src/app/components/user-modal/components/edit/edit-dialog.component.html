@@ -21,7 +21,7 @@
           (click)="hideButton(input)"
           [attr.aria-pressed]="input.hide"
         >
-          <mat-icon color="primary">{{
+          <mat-icon class="text-black">{{
             input.hide ? "visibility_off" : "visibility"
           }}</mat-icon>
         </button>
@@ -69,7 +69,7 @@
     *ngIf="checkRole()"
     class="!bg-gray-900 !text-white hover:!bg-gray-700 transition-all duration-75 !min-w-[6rem]"
     mat-button
-    (click)="editUser()"
+    (click)="toggleEditUser()"
   >
     Edit {{ authService.currentUser?.id === user.id ? "profile" : "user" }}
   </button>
@@ -82,7 +82,7 @@
   <button
     class="!bg-gray-100 !text-black hover:!bg-gray-200 transition-all duration-75 !min-w-[6rem]"
     mat-button
-    (click)="editUser()"
+    (click)="toggleEditUser()"
   >
     Cancel
   </button>

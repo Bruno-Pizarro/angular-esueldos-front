@@ -2,8 +2,9 @@ import { Component, inject, Inject, OnInit } from '@angular/core';
 import { NonNullableFormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {
-  IEditHideState,
-  IEditUser,
+  GenericOption,
+  ICreateHideState,
+  ICreateUser,
   IInputProps,
   IUser,
   UserRoles,
@@ -12,48 +13,30 @@ import { UsersService, ValidationService } from 'src/app/services';
 import { AuthService } from 'src/app/services/auth/auth.service';
 
 @Component({
-  selector: 'dialog-overview',
-  templateUrl: './edit-dialog.component.html',
+  selector: 'create-dialog',
+  templateUrl: './create-dialog.component.html',
 })
-export class EditUserDialog implements OnInit {
+export class CreateUserDialog implements OnInit {
   fb = inject(NonNullableFormBuilder);
   user!: IUser;
   role?: `${UserRoles}`;
-  edit: boolean = false;
   passwordRegex: RegExp = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]*$/;
-  inputProps: IInputProps<IEditUser>[] = [];
+  inputProps: IInputProps<ICreateUser>[] = [];
+  roles: GenericOption<`${UserRoles}`>[] = [
+    { value: UserRoles.admin, label: 'Admin' },
+    { value: UserRoles.user, label: 'User' },
+  ];
 
   constructor(
     public authService: AuthService,
     private userService: UsersService,
     public validationService: ValidationService,
-    public dialogRef: MatDialogRef<EditUserDialog>,
+    public dialogRef: MatDialogRef<CreateUserDialog>,
     @Inject(MAT_DIALOG_DATA) public id: string
-  ) {
-    this.loadUser();
-    this.role = authService.currentUser?.role;
-  }
+  ) {}
 
-  checkRole(): boolean {
-    if (this.user.role === 'admin')
-      return this.user.id === this.authService.currentUser?.id;
-    return this.role === 'admin';
-  }
-
-  async loadUser() {
-    this.user = await this.userService.getUserByID(this.id);
-    this.form.patchValue({
-      email: this.user.email,
-      name: this.user.name,
-      password: '',
-    });
-  }
   ngOnInit() {
     this.updateInputProps();
-  }
-
-  toggleEditUser(): void {
-    this.edit = !this.edit;
   }
 
   closeModal(): void {
@@ -62,18 +45,13 @@ export class EditUserDialog implements OnInit {
 
   async saveUser() {
     if (this.form.valid && this.form.value) {
-      await this.userService.editUser(
-        { ...this.form.value } as IEditUser,
-        this.id
-      );
-      this.toggleEditUser();
-      this.loadUser();
+      await this.userService.createUser({ ...this.form.value } as ICreateUser);
       this.form.reset();
     }
   }
 
   //uip
-  hide: IEditHideState = {
+  hide: ICreateHideState = {
     password: true,
   };
 
@@ -81,6 +59,11 @@ export class EditUserDialog implements OnInit {
     this.inputProps = [
       { label: 'Name', name: 'name' },
       { label: 'Email', name: 'email' },
+      {
+        label: 'Role',
+        name: 'role',
+        type: 'select',
+      },
       {
         label: 'Password',
         name: 'password',
@@ -90,7 +73,7 @@ export class EditUserDialog implements OnInit {
   }
 
   //capip
-  form = this.fb.group<{ [key in keyof IEditUser]: any }>({
+  form = this.fb.group<{ [key in keyof ICreateUser]: any }>({
     email: this.fb.control('', {
       validators: [Validators.required, Validators.email],
     }),
@@ -104,9 +87,12 @@ export class EditUserDialog implements OnInit {
         Validators.pattern(this.passwordRegex),
       ],
     }),
+    role: this.fb.control('', {
+      validators: [Validators.required],
+    }),
   });
 
-  public hideButton(input: IInputProps<IEditUser>) {
+  public hideButton(input: IInputProps<ICreateUser>) {
     this.hide[input.name] = !this.hide[input.name];
     this.updateInputProps();
   }
