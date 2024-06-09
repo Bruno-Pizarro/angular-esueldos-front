@@ -1,0 +1,98 @@
+<div class="flex justify-center items-center h-screen">
+  <form
+    [formGroup]="form"
+    (ngSubmit)="onSubmit()"
+    class="flex flex-col w-[50%] bg-gray-50 h-auto rounded-xl shadow-md justify-center gap-6 items-center p-6 px-8"
+  >
+    <header class="text-black text-5xl">
+      {{ form.value.name ? form.value.name : "New Product" }}
+    </header>
+    <div class="grid grid-cols-2 w-[100%] gap-10 py-7">
+      <div *ngFor="let input of inputProps" class="w-[100%] flex flex-col">
+        <div class="w-[8rem] m-auto flex justify-center items-center">
+          <img
+            class="aspect-square object-cover w-[8rem]"
+            *ngIf="input.type === 'image' && !form.controls[input.name]?.errors"
+            [src]="form.value[input.name]"
+          />
+          <div
+            *ngIf="input.type === 'image' && form.controls[input.name]?.errors"
+            class="aspect-square w-[60%] mx-auto object-cover flex justify-center items-center"
+          >
+            <mat-icon class="scale-[8] m-auto text-black"
+              >no_photography</mat-icon
+            >
+          </div>
+        </div>
+        <mat-form-field *ngIf="input.type !== 'image'" appearance="fill">
+          <mat-label>{{ input.label }}</mat-label>
+          <textarea
+            class="!h-[6rem] !resize-none"
+            *ngIf="input.type === 'textarea'"
+            matInput
+            [formControlName]="input.name"
+            name="{{ input.name }}"
+          ></textarea>
+          <input
+            *ngIf="input.type !== 'textarea'"
+            matInput
+            [placeholder]="input.placeholder ?? ''"
+            [formControlName]="input.name"
+            name="{{ input.name }}"
+            [type]="input.type ?? 'text'"
+          />
+          <button
+            *ngIf="input.hide !== undefined"
+            mat-icon-button
+            matSuffix
+            type="button"
+            (click)="hideButton(input)"
+            [attr.aria-pressed]="input.hide"
+          >
+            <mat-icon class="text-black">{{
+              input.hide ? "visibility_off" : "visibility"
+            }}</mat-icon>
+          </button>
+        </mat-form-field>
+        <small
+          class="text-red-400"
+          *ngIf="
+            form.get(input.name)?.invalid &&
+            form.get(input.name)?.touched &&
+            !input.disableError
+          "
+          >{{ validationService.getErrorMessage(input.name, form) }}</small
+        >
+      </div>
+    </div>
+    <div class="flex justify-between items-center w-[100%]">
+      <a
+        routerLink="../"
+        class="w-32 !bg-neutral-600 !text-white flex justify-center items-center p-2 rounded-lg text-[1rem]"
+        ><mat-icon class="scale-[0.8]">arrow_back_ios</mat-icon>Go Back</a
+      >
+      <div class="flex gap-10 justify-end items-center">
+        <button
+          class="w-32 !bg-neutral-600 !text-white"
+          mat-raised-button
+          type="button"
+          (click)="clearInputs()"
+        >
+          Clear
+        </button>
+        <button class="w-32" mat-raised-button color="primary" type="submit">
+          Save
+        </button>
+        <button
+          *ngIf="type === 'create'"
+          class="w-44 !bg-indigo-700 !text-white"
+          mat-raised-button
+          type="button"
+          (click)="onSubmit(true)"
+        >
+          Save and add more
+        </button>
+      </div>
+    </div>
+  </form>
+</div>

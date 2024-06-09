@@ -13,10 +13,23 @@ export class ValidationService {
       return 'Invalid email';
     }
     if (control?.hasError('maxLength')) {
-      return 'Maximum of 16 characters.';
+      const requiredLength = control.errors?.['maxLength']?.requiredLength;
+      return `Maximum of ${requiredLength} characters`;
     }
     if (control?.hasError('minlength')) {
-      return 'At least 8 characters';
+      const requiredLength = control.errors?.['minlength']?.requiredLength;
+      return `At least ${requiredLength} characters`;
+    }
+    if (control?.hasError('max')) {
+      const maxValue = control.errors?.['max']?.max;
+      return `Maximum of ${maxValue}`;
+    }
+    if (control?.hasError('min')) {
+      const minValue = control.errors?.['min']?.min;
+      return `Minimum of ${minValue}`;
+    }
+    if (controlName === 'image' && control?.hasError('pattern')) {
+      return 'Image must be a valid image URL';
     }
     if (control?.hasError('pattern')) {
       return 'Password must contain at least one letter and one number';

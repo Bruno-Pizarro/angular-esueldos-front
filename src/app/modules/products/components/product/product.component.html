@@ -1,0 +1,40 @@
+<div
+  class="aspect-square w-[90%] max-w-[25rem] transition-all ease-in duration-[.1s] p-4 bg-white text-black rounded-xl m-auto flex flex-col gap-2 hover:scale-[1.03]"
+>
+  <img [src]="product.description" alt="" />
+  <h1>{{ product.name }}</h1>
+  <div
+    *ngIf="!hasImage"
+    class="aspect-square w-[60%] mx-auto object-cover flex justify-center items-center"
+  >
+    <mat-icon class="scale-[8] m-auto">no_photography</mat-icon>
+  </div>
+  <img
+    *ngIf="hasImage"
+    class="aspect-square w-[60%] mx-auto object-cover"
+    [src]="product.image"
+  />
+  <div
+    *ngIf="showBottomBar"
+    class="flex justify-between items-center h-[3rem] text-xl my-2"
+  >
+    <span
+      [class]="
+        product.stock.quantity > 0 ? '' : 'line-through text-neutral-400'
+      "
+      >${{ product.price }}
+      <span class="text-neutral-500 text-sm">
+        ({{ product.stock.quantity }} in stock)</span
+      ></span
+    >
+    <buy-product *ngIf="product.stock.quantity > 0" [selectedProduct]="product">
+      Buy
+    </buy-product>
+    <span
+      class="text-neutral-800 font-bold"
+      *ngIf="product.stock.quantity <= 0"
+    >
+      Out of stock
+    </span>
+  </div>
+</div>
