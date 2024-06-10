@@ -23,10 +23,16 @@ export class ProductsService {
     private toastr: ToastrService,
     private router: Router
   ) {}
-  async getProducts(page: number = 1, sortBy: string = 'name:asc') {
+  async getProducts(
+    page: number = 1,
+    sortBy: string = 'name:asc',
+    search?: string
+  ) {
     const res = await firstValueFrom(
       this.http.get<IListResponse<IProduct>>(
-        `products?page=${page}${sortBy ? `&sortBy=${sortBy}` : ''}`
+        `products?page=${page}${sortBy ? `&sortBy=${sortBy}` : ''}${
+          search ? `&name=${search}` : ''
+        }`
       )
     );
     return res;

@@ -98,6 +98,7 @@ export class ProductsListComponent implements AfterViewInit, OnChanges {
   ngOnChanges(changes: SimpleChanges) {
     if (changes['searchInput'] && !changes['searchInput'].firstChange) {
       this.applyFilter(this.searchInput);
+      this.getProductsData();
     }
   }
 
@@ -106,7 +107,8 @@ export class ProductsListComponent implements AfterViewInit, OnChanges {
     const sortDirection = this.sort?.direction || 'asc';
     const products = await this.productsService.getProducts(
       this.paginator.pageIndex + 1,
-      sortField ? `${sortField}:${sortDirection}` : undefined
+      sortField ? `${sortField}:${sortDirection}` : undefined,
+      this.dataSource.filter
     );
     return products;
   }
@@ -126,7 +128,8 @@ export class ProductsListComponent implements AfterViewInit, OnChanges {
   onSelectionChange(product: IProduct) {
     this.selectionChange.emit(product);
   }
-  applyFilter(filterValue: string) {
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+  async applyFilter(filterValue: string) {
+    this.dataSource.filter = filterValue.trim();
+    this.dataSource.data = (await this.getProductsData()).results;
   }
 }

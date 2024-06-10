@@ -86,6 +86,6 @@
   <mat-paginator
     [length]="totalData"
     [pageSizeOptions]="[10]"
-    showFirstLastButtons
+    [showFirstLastButtons]="totalData / 10 > 3"
   ></mat-paginator>
 </div>
