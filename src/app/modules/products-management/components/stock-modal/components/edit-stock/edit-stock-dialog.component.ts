@@ -48,7 +48,7 @@ export class EditStockDialog {
   //capip
   form = this.fb.group({
     quantity: this.fb.control(0, {
-      validators: [Validators.required, Validators.min(1)],
+      validators: [Validators.required, Validators.min(0)],
     }),
   });
 }

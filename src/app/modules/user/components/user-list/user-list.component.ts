@@ -90,11 +90,12 @@ export class UserListComponent implements AfterViewInit {
     return users;
   }
 
-  announceSortChange(sortState: Sort) {
+  async announceSortChange(sortState: Sort) {
     if (sortState.direction) {
       this._liveAnnouncer.announce(`Sorted ${sortState.direction}ending`);
     } else {
       this._liveAnnouncer.announce('Sorting cleared');
     }
+    this.dataSource.data = (await this.getUsersData()).results;
   }
 }

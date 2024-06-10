@@ -1,5 +1,8 @@
 <div
-  class="aspect-square w-[90%] max-w-[25rem] transition-all ease-in duration-[.1s] p-4 bg-white text-black rounded-xl m-auto flex flex-col gap-2 hover:scale-[1.03]"
+  [ngClass]="[
+    'aspect-square w-[90%] max-w-[25rem] transition-all ease-in duration-[.1s] p-4 bg-white text-black rounded-xl m-auto flex flex-col gap-2',
+    showDescription ? '' : 'hover:scale-[1.03]'
+  ]"
 >
   <img [src]="product.description" alt="" />
   <h1>{{ product.name }}</h1>
@@ -14,6 +17,12 @@
     class="aspect-square w-[60%] mx-auto object-cover"
     [src]="product.image"
   />
+  <p
+    *ngIf="showDescription"
+    class="max-h-[8rem] overflow-hidden overflow-y-auto"
+  >
+    {{ product.description }}
+  </p>
   <div
     *ngIf="showBottomBar"
     class="flex justify-between items-center h-[3rem] text-xl my-2"

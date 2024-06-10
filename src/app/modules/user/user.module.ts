@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
-import { ToolbarComponent } from 'src/app/components';
 import { MaterialModule } from 'src/app/modules/material';
 import { UserComponent } from './user.component';
 import {

@@ -1,9 +1,8 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { MatPaginator } from '@angular/material/paginator';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { BehaviorSubject, Observable, firstValueFrom } from 'rxjs';
+import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import {
   ICreateProduct,
   IEditProduct,
@@ -39,7 +38,13 @@ export class ProductsService {
   }
 
   async getProductByID(id: string): Promise<IProduct> {
-    return await firstValueFrom(this.http.get<IProduct>(`products/${id}`));
+    try {
+      return await firstValueFrom(this.http.get<IProduct>(`products/${id}`));
+    } catch (error) {
+      this.toastr.error('Product not found');
+      this.router.navigate(['/products/management/create']);
+      throw error;
+    }
   }
 
   async editProduct(product: IEditProduct, id: string) {

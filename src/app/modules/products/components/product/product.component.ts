@@ -7,6 +7,7 @@ import { IProduct } from 'src/app/models';
 })
 export class ProductCardComponent implements OnInit {
   @Input() product!: IProduct;
+  @Input() showDescription: boolean = false;
   @Input() showBottomBar: boolean = true;
   imageRegEx =
     /(?:(?:https?:\/\/))[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b(?:[-a-zA-Z0-9@:%_\+.~#?&\/=]*(\.jpg|\.png|\.jpeg))/g;

@@ -12,12 +12,6 @@ export class AppComponent implements OnInit {
   constructor(public auth: AuthService, private router: Router) {}
 
   ngOnInit(): void {
-    try {
-      // this.auth.refreshToken();
-    } catch (error) {
-      // this.auth.logOut();
-    }
-
     this.router.events
       .pipe(
         filter(

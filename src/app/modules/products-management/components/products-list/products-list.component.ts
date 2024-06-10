@@ -113,12 +113,13 @@ export class ProductsListComponent implements AfterViewInit, OnChanges {
     return products;
   }
 
-  announceSortChange(sortState: Sort) {
+  async announceSortChange(sortState: Sort) {
     if (sortState.direction) {
       this._liveAnnouncer.announce(`Sorted ${sortState.direction}ending`);
     } else {
       this._liveAnnouncer.announce('Sorting cleared');
     }
+    this.dataSource.data = (await this.getProductsData()).results;
   }
 
   checkSelected(product: IProduct) {

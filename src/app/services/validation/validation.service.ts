@@ -12,8 +12,8 @@ export class ValidationService {
     if (control?.hasError('email')) {
       return 'Invalid email';
     }
-    if (control?.hasError('maxLength')) {
-      const requiredLength = control.errors?.['maxLength']?.requiredLength;
+    if (control?.hasError('maxlength')) {
+      const requiredLength = control.errors?.['maxlength']?.requiredLength;
       return `Maximum of ${requiredLength} characters`;
     }
     if (control?.hasError('minlength')) {

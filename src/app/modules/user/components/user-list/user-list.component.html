@@ -24,7 +24,14 @@
     <!-- Email Column -->
     <ng-container matColumnDef="email">
       <th mat-header-cell mat-sort-header *matHeaderCellDef>Email</th>
-      <td mat-cell *matCellDef="let element">{{ element.email }}</td>
+      <td mat-cell *matCellDef="let element">
+        {{ element.email
+        }}<span
+          *ngIf="element.email === auth.currentUser?.email"
+          class="p-1 text-[0.7rem] bg-amber-300 rounded-lg ml-2 h-3"
+          >you</span
+        >
+      </td>
     </ng-container>
 
     <!-- IsVerified Column -->
@@ -60,7 +67,11 @@
               [userSelected]="element"
               class="w-[100%]"
               >{{
-                auth.currentUser?.role === "admin" ? "Edit" : "View"
+                auth.currentUser?.role === "admin"
+                  ? auth.currentUser?.id === element.id
+                    ? "Edit profile"
+                    : "Edit"
+                  : "View"
               }}</app-user-modal
             >
           </button>
