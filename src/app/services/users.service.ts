@@ -2,7 +2,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
-import { ICreateUser, IEditUser, IUser, IUsersResponse } from 'src/app/models';
+import { ICreateUser, IEditUser, IListResponse, IUser } from 'src/app/models';
 
 @Injectable({
   providedIn: 'root',
@@ -12,9 +12,13 @@ export class UsersService {
   public usersUpdated$ = this.usersUpdatedSubject.asObservable();
   constructor(private http: HttpClient, private toastr: ToastrService) {}
 
-  async getUsers() {
-    return (await firstValueFrom(this.http.get<IUsersResponse>('users')))
-      .results;
+  async getUsers(page: number = 1, sortBy: string = 'name:asc') {
+    const response = await firstValueFrom(
+      this.http.get<IListResponse<IUser>>(
+        `users?page=${page}${sortBy ? `&sortBy=${sortBy}` : ''}`
+      )
+    );
+    return response;
   }
 
   async getUserByID(id: string): Promise<IUser> {

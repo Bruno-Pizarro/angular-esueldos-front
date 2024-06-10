@@ -14,3 +14,17 @@ body {
 :root {
     color-scheme: light dark;
 }
+
+.mat-paginator-custom {
+    .mat-mdc-icon-button:not([disabled="true"]) {
+        * {
+            fill: white;
+        }
+    }
+
+    .mat-mdc-icon-button[disabled="true"] {
+        * {
+            fill: rgba(255, 255, 255, 0.514);
+        }
+    }
+}

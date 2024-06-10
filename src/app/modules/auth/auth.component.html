@@ -38,8 +38,7 @@
       {{ mainAction }}
     </button>
     <a
-      (click)="navigate(altPath)"
-      type="button"
+      [routerLink]="altPath"
       class="text-black cursor-pointer hover:text-indigo-300 underline"
       >{{ altAction }}</a
     >

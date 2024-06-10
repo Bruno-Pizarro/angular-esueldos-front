@@ -1,0 +1,47 @@
+<h1 class="!text-3xl flex justify-between" mat-dialog-title>Update Stock</h1>
+<div mat-dialog-content>
+  <form [formGroup]="form" (ngSubmit)="buyProduct()">
+    <product-card [product]="selected" [showBottomBar]="false"></product-card>
+    <div class="flex justify-between items-center">
+      <span class="max-w-[10rem] break-all flex flex-col"
+        >Total: $
+        {{
+          form.value.quantity
+            ? selected.price * form.value.quantity
+            : selected.price
+        }}
+        <span class="text-neutral-500 text-sm">
+          ({{ selected.stock.quantity }} in stock)</span
+        >
+      </span>
+      <div class="flex flex-col">
+        <mat-form-field appearance="fill">
+          <mat-label>Quantity</mat-label>
+          <input matInput formControlName="quantity" [type]="'number'" />
+        </mat-form-field>
+        <small class="text-red-400">{{
+          validationService.getErrorMessage("quantity", form)
+        }}</small>
+      </div>
+      <button class="hidden" type="submit"></button>
+    </div>
+  </form>
+  <div class="!justify-end !px-3" mat-dialog-actions>
+    <button
+      class="!bg-gray-100 !text-black hover:!bg-gray-200 transition-all duration-75 !min-w-[6rem]"
+      mat-button
+      (click)="closeModal()"
+    >
+      Cancel
+    </button>
+    <button
+      class="!bg-green-300 !text-black hover:!bg-green-400 transition-all duration-75 !min-w-[6rem] disabled:!bg-neutral-500"
+      mat-button
+      type="submit"
+      [disabled]="form.controls.quantity.errors"
+      (click)="buyProduct()"
+    >
+      Purchase
+    </button>
+  </div>
+</div>

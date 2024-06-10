@@ -23,7 +23,6 @@ export class AuthGuard implements CanActivate {
     | boolean
     | UrlTree {
     if (this.authService.checkLogin()) {
-      if (this.authService.checkTokenExp()) this.authService.refreshToken();
       return true;
     }
     this.router.navigate(['auth/login']);

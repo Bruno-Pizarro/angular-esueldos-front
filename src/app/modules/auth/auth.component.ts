@@ -42,7 +42,7 @@ export abstract class AuthComponent implements OnInit {
   //lc
   ngOnInit() {
     if (this.authService.checkLogin()) {
-      this.router.navigate(['/home']);
+      this.router.navigate(['/products']);
     }
     this.updateInputProps();
   }

@@ -2,20 +2,26 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-import { throwError } from 'rxjs';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { StorageKeys } from 'src/app/constants';
 import { ILoginState, IRegisterState } from 'src/app/models';
 import { IAuthResponse, IUser } from '../../models/user.model';
+import { CookiesService } from 'src/app/services/cookies';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   public currentUser: IUser | null = null;
+  private currentUserSubject: BehaviorSubject<IUser | null> =
+    new BehaviorSubject<IUser | null>(null);
+  public currentUser$: Observable<IUser | null> =
+    this.currentUserSubject.asObservable();
   constructor(
     private http: HttpClient,
     private toastr: ToastrService,
-    private router: Router
+    private router: Router,
+    private cookies: CookiesService
   ) {}
   popupError({ error, message }: HttpErrorResponse) {
     const msg = error?.message ?? message;
@@ -24,14 +30,20 @@ export class AuthService {
   }
 
   setStoreKeys({ tokens }: IAuthResponse) {
-    localStorage.setItem(StorageKeys.EXP, tokens.access.expires);
-    localStorage.setItem(StorageKeys.TOKEN, tokens.access.token);
-    localStorage.setItem(StorageKeys.R_TOKEN, tokens.refresh.token);
+    this.cookies.setItem(
+      StorageKeys.TOKEN,
+      tokens.access.token,
+      tokens.access.expires
+    );
+    this.cookies.setItem(
+      StorageKeys.R_TOKEN,
+      tokens.refresh.token,
+      tokens.refresh.expires
+    );
   }
   removeStoreKeys() {
-    localStorage.removeItem(StorageKeys.EXP);
-    localStorage.removeItem(StorageKeys.TOKEN);
-    localStorage.removeItem(StorageKeys.R_TOKEN);
+    this.cookies.removeItem(StorageKeys.TOKEN);
+    this.cookies.removeItem(StorageKeys.R_TOKEN);
   }
 
   signIn(data: ILoginState) {
@@ -40,7 +52,7 @@ export class AuthService {
         this.setStoreKeys(res);
         this.currentUser = res.user;
         this.toastr.success('Successfully logged in');
-        this.router.navigate(['/home']);
+        this.router.navigate(['/products']);
       },
       error: (err: HttpErrorResponse) => this.popupError(err),
     });
@@ -59,32 +71,38 @@ export class AuthService {
 
   logOut() {
     if (this.currentUser) this.toastr.warning('Logged out');
-    localStorage.removeItem(StorageKeys.EXP);
-    localStorage.removeItem(StorageKeys.TOKEN);
-    localStorage.removeItem(StorageKeys.R_TOKEN);
+    this.cookies.removeItem(StorageKeys.TOKEN);
+    this.cookies.removeItem(StorageKeys.R_TOKEN);
     this.currentUser = null;
     this.router.navigate(['/auth/login']);
   }
 
   refreshToken() {
-    const rToken = localStorage.getItem(StorageKeys.R_TOKEN);
+    const rToken = this.cookies.getItem(StorageKeys.R_TOKEN);
     return this.http
       .post<IAuthResponse>('auth/refresh-tokens', {
         refreshToken: rToken,
       })
       .subscribe({
         next: (res) => {
-          const { tokens, user } = res;
-          localStorage.setItem(StorageKeys.EXP, tokens.access.expires);
-          localStorage.setItem(StorageKeys.TOKEN, tokens.access.token);
-          localStorage.setItem(StorageKeys.R_TOKEN, tokens.refresh.token);
+          const { user } = res;
+          this.setStoreKeys(res);
           this.currentUser = user;
+          this.currentUserSubject.next(user);
+          return user;
         },
       });
   }
 
+  loadUser() {
+    const rToken = this.cookies.getItem(StorageKeys.R_TOKEN);
+    return this.http.post<IAuthResponse>('auth/refresh-tokens', {
+      refreshToken: rToken,
+    });
+  }
+
   checkTokenExp() {
-    const exp = localStorage.getItem(StorageKeys.EXP);
+    const exp = this.cookies.getItemExpiration(StorageKeys.TOKEN);
     if (!exp) return false;
     const expToDate = new Date(exp);
     const minutesDifference =
@@ -94,9 +112,9 @@ export class AuthService {
   }
 
   checkLogin() {
-    const exp = localStorage.getItem(StorageKeys.EXP);
-    const token = localStorage.getItem(StorageKeys.TOKEN);
-    const rToken = localStorage.getItem(StorageKeys.R_TOKEN);
+    const exp = this.cookies.getItemExpiration(StorageKeys.TOKEN);
+    const token = this.cookies.getItem(StorageKeys.TOKEN);
+    const rToken = this.cookies.getItem(StorageKeys.R_TOKEN);
     return (
       exp && token && rToken && new Date(exp).getTime() > new Date().getTime()
     );

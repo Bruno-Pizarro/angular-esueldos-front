@@ -3,11 +3,16 @@ import { RouterModule, Routes } from '@angular/router';
 import {
   LoginComponent,
   RegisterComponent,
+  UnauthorizedComponent,
 } from 'src/app/modules/auth/components';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
+  {
+    path: 'unauthorized',
+    component: UnauthorizedComponent,
+  },
 ];
 
 @NgModule({

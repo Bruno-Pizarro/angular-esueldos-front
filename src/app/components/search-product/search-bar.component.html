@@ -1,0 +1,14 @@
+<div
+  class="pr-2 min-w-[14rem] bg-white rounded-md flex items-center justify-between"
+>
+  <input
+    (input)="handleInputChange($event)"
+    placeholder="Search"
+    [value]="searchInput"
+    class="w-[90%] placeholder:text-neutral-600 text-black bg-transparent focus:outline-none border-0 p-2"
+  />
+  <mat-icon
+    class="!text-neutral-600 scale-[1.4] cursor-pointer hover:!text-black"
+    >search</mat-icon
+  >
+</div>

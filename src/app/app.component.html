@@ -1,1 +1,2 @@
-<router-outlet> </router-outlet>
+<app-toolbar *ngIf="auth.currentUser && showToolbar"></app-toolbar>
+<router-outlet></router-outlet>

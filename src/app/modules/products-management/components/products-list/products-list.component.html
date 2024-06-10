@@ -1,0 +1,96 @@
+<div
+  class="mat-elevation-z8 overflow-hidden rounded-xl m-auto mb-10 w-[75%] max-h-[80vh]"
+>
+  <table
+    mat-table
+    [dataSource]="dataSource"
+    matSort
+    (matSortChange)="announceSortChange($event)"
+  >
+    <!-- Select Column -->
+    <ng-container matColumnDef="select">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-checkbox
+          (change)="
+            onSelectAll.emit(dataSource._pageData(this.dataSource.data))
+          "
+          [checked]="!!selectedProducts.length"
+        ></mat-checkbox>
+      </th>
+      <td mat-cell class="!text-center" *matCellDef="let element">
+        <span>
+          <mat-checkbox
+            [name]="element.id"
+            (change)="onSelectionChange(element)"
+            [checked]="checkSelected(element)"
+          ></mat-checkbox>
+        </span>
+      </td>
+    </ng-container>
+
+    <!-- Id Column -->
+    <ng-container matColumnDef="id">
+      <th mat-header-cell mat-sort-header *matHeaderCellDef>ID</th>
+      <td mat-cell *matCellDef="let element">{{ element.id }}</td>
+    </ng-container>
+
+    <!-- Name Column -->
+    <ng-container matColumnDef="name">
+      <th mat-header-cell mat-sort-header *matHeaderCellDef>Name</th>
+      <td mat-cell *matCellDef="let element">
+        {{ element.name }}
+      </td>
+    </ng-container>
+
+    <!-- Price Column -->
+    <ng-container matColumnDef="price">
+      <th mat-header-cell mat-sort-header *matHeaderCellDef>Price</th>
+      <td mat-cell *matCellDef="let element">${{ element.price }}</td>
+    </ng-container>
+
+    <!-- Stock Column -->
+    <ng-container matColumnDef="stock">
+      <th mat-header-cell *matHeaderCellDef>Stock</th>
+      <td mat-cell *matCellDef="let element">
+        {{ element.stock.quantity }}
+      </td>
+    </ng-container>
+
+    <!-- Menu Column -->
+    <ng-container matColumnDef="menu">
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell *matCellDef="let element">
+        <button
+          class="flex w-auto rounded-full p-2 hover:bg-[#c9c9c9] active:bg-[#c9c9c9] active:scale-110 transition-all ease-in transitio duration-[.2s]"
+          [matMenuTriggerFor]="menu"
+        >
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu class="w-auto !min-w-0 !px-2" #menu="matMenu">
+          <a
+            [routerLink]="['/products/management', element.id]"
+            class="w-[100%] flex justify-start items-center p-3 cursor-pointer"
+            >Edit</a
+          >
+          <button class="w-[100%] flex justify-start items-center">
+            <product-modal
+              [selectedProducts]="selectedProducts"
+              (selectProduct)="(selectionChange)"
+              [selectedProduct]="element"
+              class="w-[100%]"
+              >Delete</product-modal
+            >
+          </button>
+        </mat-menu>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+  </table>
+  <mat-paginator
+    [length]="totalData"
+    [pageSizeOptions]="[10]"
+    [showFirstLastButtons]="totalData / 10 > 3"
+  ></mat-paginator>
+</div>

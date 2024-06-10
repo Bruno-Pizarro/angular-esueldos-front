@@ -6,13 +6,6 @@ export interface IUser {
   isEmailVerified?: boolean;
 }
 
-export interface IUsersResponse {
-  results: IUser[];
-  page: number;
-  limit: number;
-  totalPages: number;
-}
-
 export enum UserRoles {
   admin = 'admin',
   user = 'user',

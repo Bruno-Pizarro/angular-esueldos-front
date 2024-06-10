@@ -1,9 +1,36 @@
 <mat-toolbar class="flex justify-between items-center bg-purple-900 text-white">
-  <div class="justify-between items-center gap-5 flex">
-    <span>e-Sueldos: User management</span>
-  </div>
+  <a
+    routerLink="/home"
+    class="justify-between items-center gap-5 flex max-[600px]:hidden"
+  >
+    <span>e-Sueldos: Products management</span>
+  </a>
   <span class="example-spacer"></span>
-  <div class="flex gap-10">
+  <nav class="flex gap-10">
+    <a
+      routerLink="/products"
+      [routerLinkActiveOptions]="{ exact: true }"
+      routerLinkActive="active_link"
+      class="example-icon favorite-icon flex items-center justify-center"
+    >
+      <mat-icon>home</mat-icon>
+    </a>
+    <a
+      routerLink="/products/management"
+      routerLinkActive="active_link"
+      *ngIf="authService.currentUser?.role === 'admin'"
+      class="example-icon favorite-icon flex items-center justify-center"
+    >
+      <mat-icon>dashboard</mat-icon>
+    </a>
+    <a
+      routerLink="/users"
+      routerLinkActive="active_link"
+      *ngIf="authService.currentUser?.role === 'admin'"
+      class="example-icon favorite-icon flex items-center justify-center"
+    >
+      <mat-icon>manage_accounts</mat-icon>
+    </a>
     <button
       mat-icon-button
       class="example-icon favorite-icon flex items-center justify-center"
@@ -11,5 +38,5 @@
     >
       <mat-icon>logout</mat-icon>
     </button>
-  </div>
+  </nav>
 </mat-toolbar>

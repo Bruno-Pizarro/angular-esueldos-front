@@ -14,6 +14,8 @@ export interface IInputProps<T> {
   name: keyof T;
   hide?: boolean;
   type?: string;
+  placeholder?: string;
+  disableError?: boolean;
 }
 
 export interface ILoginState {
@@ -22,6 +24,10 @@ export interface ILoginState {
 }
 export type ILoginHideState = {
   [key in keyof ILoginState]?: boolean;
+};
+
+export type IGenericHideState<T> = {
+  [key in keyof T]?: boolean;
 };
 
 export interface IEditUser {
