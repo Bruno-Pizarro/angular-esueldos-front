@@ -47,10 +47,38 @@ export class ProductsService {
     }
   }
 
-  async editProduct(product: IEditProduct, id: string) {
-    return await firstValueFrom(this.http.patch(`products/${id}`, product))
-      .then(() => {
+  private createProductFormData(
+    product: ICreateProduct | IEditProduct,
+    imageFile?: File
+  ): FormData {
+    const formData = new FormData();
+    if (product.name) formData.append('name', product.name);
+    if (product.description)
+      formData.append('description', product.description);
+    if (product.price) formData.append('price', product.price.toString());
+    if (imageFile) {
+      formData.append('image', imageFile, imageFile.name);
+    }
+
+    return formData;
+  }
+
+  async editProduct(
+    product: IEditProduct,
+    id: string,
+    imageFile?: File,
+    stockUpdated?: boolean
+  ) {
+    const { quantity, ...restOfProduct } = product;
+    const formData = this.createProductFormData(restOfProduct, imageFile);
+    return await firstValueFrom(this.http.patch(`products/${id}`, formData))
+      .then(async () => {
         this.productsUpdatedSubject.next();
+        if (quantity && stockUpdated)
+          await this.updateStock(
+            [{ productId: id, quantity: quantity ?? 0 }],
+            stockUpdated
+          );
         this.toastr.success('Product updated');
       })
       .catch(({ error, message }: HttpErrorResponse) => {
@@ -58,11 +86,11 @@ export class ProductsService {
       });
   }
 
-  async updateStock(products: IEditStock[]) {
+  async updateStock(products: IEditStock[], showToast: boolean = true) {
     return await firstValueFrom(this.http.put(`stock/update`, { products }))
       .then(() => {
         this.productsUpdatedSubject.next();
-        this.toastr.success('Products stock updated');
+        if (showToast) this.toastr.success('Products stock updated');
       })
       .catch(({ error, message }: HttpErrorResponse) => {
         this.toastr.error(error.message ?? message);
@@ -80,10 +108,20 @@ export class ProductsService {
       });
   }
 
-  async createProduct(product: ICreateProduct, addMore?: boolean) {
-    return await firstValueFrom(this.http.post<IProduct>(`products`, product))
-      .then((res) => {
+  async createProduct(
+    product: ICreateProduct,
+    imageFile?: File,
+    addMore?: boolean
+  ) {
+    const { quantity, ...restOfProduct } = product;
+    const formData = this.createProductFormData(restOfProduct, imageFile);
+    return await firstValueFrom(this.http.post<IProduct>(`products`, formData))
+      .then(async (res) => {
         this.productsUpdatedSubject.next();
+        if (quantity)
+          await this.updateStock([
+            { productId: res.id, quantity: quantity ?? 0 },
+          ]);
         this.toastr.success('Product created');
         if (!addMore) this.router.navigate([`products/management/${res.id}`]);
       })

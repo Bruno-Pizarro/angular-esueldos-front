@@ -9,20 +9,49 @@
     </header>
     <div class="grid grid-cols-2 w-[100%] gap-10 py-7">
       <div *ngFor="let input of inputProps" class="w-[100%] flex flex-col">
-        <div class="w-[8rem] m-auto flex justify-center items-center">
-          <img
-            class="aspect-square object-cover w-[8rem]"
-            *ngIf="input.type === 'image' && !form.controls[input.name]?.errors"
-            [src]="form.value[input.name]"
-          />
-          <div
-            *ngIf="input.type === 'image' && form.controls[input.name]?.errors"
-            class="aspect-square w-[60%] mx-auto object-cover flex justify-center items-center"
+        <ngx-file-drop
+          accept="image/*"
+          dropZoneClassName="border-none w-[8rem] aspect-square m-auto"
+          class="border-none"
+          *ngIf="input.type === 'image'"
+          (onFileDrop)="dropped($event)"
+        >
+          <ng-template
+            ngx-file-drop-content-tmp
+            let-openFileSelector="openFileSelector"
           >
-            <mat-icon class="scale-[8] m-auto text-black"
-              >no_photography</mat-icon
+            <div
+              (click)="openFileSelector()"
+              ngx-file-drop-content
+              title="Click to browse or drag&drop an image file"
+              class="w-[8rem] m-auto flex justify-center items-center border-none"
             >
-          </div>
+              <img
+                class="aspect-square object-cover w-[8rem] hover:scale-[1.1] cursor-pointer transition-all ease duration-200"
+                *ngIf="
+                  input.type === 'image' && !form.controls[input.name]?.errors
+                "
+                [src]="form.value[input.name]"
+              />
+              <div
+                *ngIf="
+                  input.type === 'image' && form.controls[input.name]?.errors
+                "
+                class="aspect-square w-[60%] mx-auto object-cover flex justify-center items-center"
+              >
+                <mat-icon
+                  class="scale-[8] m-auto text-black hover:text-neutral-400 cursor-pointer transition-all ease duration-200"
+                  >no_photography</mat-icon
+                >
+              </div>
+            </div>
+          </ng-template>
+        </ngx-file-drop>
+        <div
+          *ngIf="input.type === 'image'"
+          class="text-emerald-800 m-auto mb-0 pt-3"
+        >
+          Click to browse or drag&drop an image file
         </div>
         <mat-form-field *ngIf="input.type !== 'image'" appearance="fill">
           <mat-label>{{ input.label }}</mat-label>

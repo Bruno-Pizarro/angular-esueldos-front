@@ -5373,6 +5373,13 @@ neo-async@^2.6.2:
   resolved "https://registry.yarnpkg.com/neo-async/-/neo-async-2.6.2.tgz#b4aafb93e3aeb2d8174ca53cf163ab7d7308305f"
   integrity sha512-Yd3UES5mWCSqR+qNT93S3UoYUkqAZ9lLg8a7g9rimsWmYGK8cVToA4/sF3RrshdyV3sAGMXVUmpMYOw+dLpOuw==
 
+ngx-file-drop@15.0.0:
+  version "15.0.0"
+  resolved "https://registry.yarnpkg.com/ngx-file-drop/-/ngx-file-drop-15.0.0.tgz#eb7066d1dc078b0556965aa2cc05d9c5eb4b6faf"
+  integrity sha512-P1BRa9w+l6CFCQFEHRaUcQy8DvrgwMnWZUWwndcXQ+Qqqa3BOXfrN26uDd+px9FD/P5OkKidhglI7VRX6qmLwg==
+  dependencies:
+    tslib "^2.3.0"
+
 ngx-toastr@16.2.0:
   version "16.2.0"
   resolved "https://registry.yarnpkg.com/ngx-toastr/-/ngx-toastr-16.2.0.tgz#f138c31c3b6960a1059aeea7133a44e4db95db79"

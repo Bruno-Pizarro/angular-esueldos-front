@@ -1,6 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { NonNullableFormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { NgxFileDropEntry } from 'ngx-file-drop';
 import {
   ICreateProduct,
   IEditProduct,
@@ -9,6 +10,7 @@ import {
   IProduct,
 } from 'src/app/models';
 import { ProductsService, ValidationService } from 'src/app/services';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-product-form',
@@ -17,20 +19,20 @@ import { ProductsService, ValidationService } from 'src/app/services';
 export class ProductsFormComponent implements OnInit {
   type: 'edit' | 'create' = 'create';
   product?: IProduct;
+  productImageURL?: string = '';
   id?: string | null;
-  imageRegEx =
-    /(?:(?:https?:\/\/))[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,4}\b(?:[-a-zA-Z0-9@:%_\+.~#?&\/=]*(\.jpg|\.png|\.jpeg))/g;
 
   fb = inject(NonNullableFormBuilder);
   hide!: IGenericHideState<ICreateProduct>;
   inputProps: IInputProps<ICreateProduct>[] = [];
+  selectedFile?: File;
 
   form = this.fb.group<{ [key in keyof ICreateProduct]: any }>({
     name: this.fb.control('', {
       validators: [Validators.required, Validators.minLength(3)],
     }),
     image: this.fb.control('', {
-      validators: [Validators.required, Validators.pattern(this.imageRegEx)],
+      validators: [Validators.required],
     }),
     description: this.fb.control('', {
       validators: [Validators.required, Validators.maxLength(255)],
@@ -68,10 +70,13 @@ export class ProductsFormComponent implements OnInit {
     if (this.id) {
       this.type = 'edit';
       this.product = await this.productsService.getProductByID(this.id);
+      this.productImageURL = `${
+        environment.BASE_URL
+      }/products/uploads/${this.product.image.split('/').pop()}`;
       this.form.patchValue({
         description: this.product.description,
         name: this.product.name,
-        image: this.product.image,
+        image: this.productImageURL,
         price: this.product.price,
         quantity: this.product.stock.quantity,
       });
@@ -79,43 +84,90 @@ export class ProductsFormComponent implements OnInit {
   }
 
   async clearInputs() {
-    if (this.id) {
-      this.type = 'edit';
-      this.product = await this.productsService.getProductByID(this.id);
-      this.form.reset({
-        description: '',
-        name: '',
-        image: '',
-        price: 1,
-        quantity: 0,
-      });
-    }
+    this.form.reset({
+      description: '',
+      name: '',
+      image: '',
+      price: 1,
+      quantity: 0,
+    });
+    this.selectedFile = undefined;
   }
 
   updateInputProps() {
     this.inputProps = [
       { label: 'Name', name: 'name' },
       { label: 'Price', name: 'price', type: 'number' },
-      {
-        label: 'Image',
-        name: 'image',
-        placeholder: 'http://example-image.jpg',
-      },
       { label: 'Stock', name: 'quantity' },
-      { label: '', name: 'image', type: 'image', disableError: true },
+      { label: '', name: 'image', type: 'image' },
       { label: 'Description', name: 'description', type: 'textarea' },
     ];
   }
+
+  public dropped(files: NgxFileDropEntry[]) {
+    this.uploadFile(files);
+  }
+
+  private uploadFile(files: NgxFileDropEntry[]) {
+    if (files.length === 0) {
+      return;
+    }
+
+    const fileEntry = files[0].fileEntry as FileSystemFileEntry;
+    fileEntry.file((file: File) => {
+      if (!file.type.startsWith('image/')) {
+        this.form.get('image')?.setErrors({ invalidImageType: true });
+        this.form.get('image')?.markAsTouched();
+        return;
+      }
+      this.form.get('image')?.setErrors(null);
+      this.selectedFile = file;
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.form.patchValue({ image: reader.result });
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  public fileSelect(event: any) {
+    const input = event.target as HTMLInputElement;
+    if (!input.files?.length) {
+      return;
+    }
+
+    const files: NgxFileDropEntry[] = Array.from(input.files).map(
+      (file: File) => ({
+        relativePath: file.name,
+        fileEntry: {
+          isFile: true,
+          isDirectory: false,
+          name: file.name,
+          fullPath: file.name,
+          file: (callback: (file: File) => void) => callback(file),
+        } as FileSystemFileEntry,
+      })
+    );
+
+    this.uploadFile(files);
+  }
+
   onSubmit(addMore?: boolean): void {
     if (this.form.value && this.form.valid) {
       if (this.type === 'edit')
         this.productsService.editProduct(
           this.form.value as IEditProduct,
-          this.id!
+          this.id!,
+          this.selectedFile,
+          this.product?.stock.quantity !== this.form.value.quantity
         );
       else
         this.productsService
-          .createProduct(this.form.value as ICreateProduct, addMore)
+          .createProduct(
+            this.form.value as ICreateProduct,
+            this.selectedFile,
+            addMore
+          )
           .then(() => {
             if (addMore)
               this.form.reset({
@@ -125,6 +177,7 @@ export class ProductsFormComponent implements OnInit {
                 price: 1,
                 quantity: 0,
               });
+            this.selectedFile = undefined;
           });
     }
   }

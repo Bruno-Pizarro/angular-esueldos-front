@@ -9,6 +9,9 @@ export class ValidationService {
 
   public getErrorMessage(controlName: string, form: FormGroup): string {
     const control = form.get(controlName);
+    if (control?.hasError('invalidImageType')) {
+      return 'File must be an image';
+    }
     if (control?.hasError('email')) {
       return 'Invalid email';
     }
@@ -27,9 +30,6 @@ export class ValidationService {
     if (control?.hasError('min')) {
       const minValue = control.errors?.['min']?.min;
       return `Minimum of ${minValue}`;
-    }
-    if (controlName === 'image' && control?.hasError('pattern')) {
-      return 'Image must be a valid image URL';
     }
     if (control?.hasError('pattern')) {
       return 'Password must contain at least one letter and one number';

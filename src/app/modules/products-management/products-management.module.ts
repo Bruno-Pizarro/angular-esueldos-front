@@ -13,6 +13,7 @@ import {
   StockModalComponent,
 } from 'src/app/modules/products-management/components';
 import { SearchBarComponent } from 'src/app/components/search-product';
+import { NgxFileDropModule } from 'ngx-file-drop';
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import { SearchBarComponent } from 'src/app/components/search-product';
     ProductModalComponent,
     ProductsListComponent,
     SearchBarComponent,
+    NgxFileDropModule,
   ],
 })
 export class ProductsManagementModule {}
